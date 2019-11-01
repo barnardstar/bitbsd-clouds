@@ -3,26 +3,27 @@ Here you go with some basic stuff
 
 _execute bitcoin calls_
 
-`host:/var/db/bitcoin@ #  bitcoin-cli echo test`
+`host:/home/lightning@ #  bitcoin-cli echo test`
 
-_manage full node_
+_play with c-lightning_
 
-`host:/var/db/bitcoin@ # start_bitcoind.sh`
+`host:/var/db/bitcoin@ # start_clightning.sh`
 
-`host:/var/db/bitcoin@ # stop_bitcoind.sh`
+`host:/var/db/bitcoin@ # stop_clightning.sh`
 
-`host:/var/db/bitcoin@ # restart_bitcoind.sh`
+`host:/var/db/bitcoin@ # restart_clightning.sh`
 
-_edit bitcoind config_
+_receive on-chain funds to your node_
 
-`host:/var/db/bitcoin@ # [nano | vim] ~/bitcoin_daemon.conf`
+`host:/var/db/bitcoin@ # receive_onchain.sh`
 
-_ZeroMQ support enabled_
+_open channel for all available funds to BitBSD LN node_
 
-`zmqpubrawblock=tcp://localhost:29000`
+`host:/var/db/bitcoin@ # open-all-in.sh`
 
-`zmqpubrawtx=tcp://localhost:39000`
+_edit lightningd config_
 
+`host:/var/db/bitcoin@ # [ nano | vim | vi | ee ] ~/.lightning/config`
 
 _use tmux to keep your app running_
 
@@ -44,6 +45,6 @@ _or_
 
 `>>> import bitcoinrpc`
 
-**Attention! For security purposees this jail has no normal internet connection, while you still can access internet via proxy socks5://192.168.0.199:9050**
+**Attention! For security purposes this jail has no normal internet connection, while you still can access internet via proxy socks5://192.168.0.199:9050**
 
 **Lack of features?** Feel free to contrbute to this set of scripts on https://github.com/bitcoin-software/bitbsd-clouds/
