@@ -17,6 +17,13 @@ _edit bitcoind config_
 
 `host:/var/db/bitcoin@ # [nano | vim] ~/bitcoin_daemon.conf`
 
+_ZeroMQ support enabled_
+
+`zmqpubrawblock=tcp://localhost:29000`
+
+`zmqpubrawtx=tcp://localhost:39000`
+
+
 _use tmux to keep your app running_
 
 `host:/var/db/bitcoin@ # tmux` or attach to existing sesion with `host:/var/db/bitcoin@ # tmux a`
