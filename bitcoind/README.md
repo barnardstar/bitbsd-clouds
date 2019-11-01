@@ -15,7 +15,7 @@ _manage full node_
 
 _edit bitcoind config_
 
-`host:/var/db/bitcoin@ # [nano | vim] ~/bitcoind.conf`
+`host:/var/db/bitcoin@ # [nano | vim] ~/bitcoin_daemon.conf`
 
 _use tmux to keep your app running_
 
