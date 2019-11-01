@@ -51,6 +51,5 @@ def main():
     system('sh /var/db/bitcoin/tools/restart_bitcoind.sh')
 
 
-
 if __name__ == '__main__':
     main()
