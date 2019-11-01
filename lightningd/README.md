@@ -7,35 +7,35 @@ _execute bitcoin calls_
 
 _play with c-lightning_
 
-`host:/var/db/bitcoin@ # start_clightning.sh`
+`host:/home/lightning@ # start_clightning.sh`
 
-`host:/var/db/bitcoin@ # stop_clightning.sh`
+`host:/home/lightning@ # stop_clightning.sh`
 
-`host:/var/db/bitcoin@ # restart_clightning.sh`
+`host:/home/lightning@ # restart_clightning.sh`
 
 _receive on-chain funds to your node_
 
-`host:/var/db/bitcoin@ # receive_onchain.sh`
+`host:/home/lightning@ # refill_onchain.sh`
 
 _open channel for all available funds to BitBSD LN node_
 
-`host:/var/db/bitcoin@ # open-all-in.sh`
+`host:/home/lightning@ # open-all-in.sh`
 
 _edit lightningd config_
 
-`host:/var/db/bitcoin@ # [ nano | vim | vi | ee ] ~/.lightning/config`
+`host:/home/lightning@ # [ nano | vim | vi | ee ] ~/.lightning/config`
 
 _use tmux to keep your app running_
 
-`host:/var/db/bitcoin@ # tmux` or attach to existing sesion with `host:/var/db/bitcoin@ # tmux a`
+`host:/home/lightning@ # tmux` or attach to existing sesion with `host:/home/lightning@ # tmux a`
 
 _feel free to use python_
 
-`host:/var/db/bitcoin@ # python3.7 yourapp.py`
+`host:/home/lightning@ # python3.7 yourapp.py`
 
 _or_
 
-`host:/var/db/bitcoin@ # python3.7 `
+`host:/home/lightning@ # python3.7 `
 
 `Python 3.7.4 (default, Aug 22 2019, 05:59:46)`
  
