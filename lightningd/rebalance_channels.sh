@@ -32,4 +32,4 @@ print('now rebalancing node.. be patient, this takes a while')
 cnt = 0
 while cnt < 100:
     cnt += 1
-    os.system('lightning-cli rebalance ' + random.choice(high) + ' ' + random.choice(low) + ' ' + str(random.randrange(10000, 50000)*1000))
+    os.system('lightning-cli rebalance ' + random.choice(high) + ' ' + random.choice(low) + ' ' + str(random.randrange(10000, 30000)*1000))
