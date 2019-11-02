@@ -7,11 +7,19 @@ _execute bitcoin calls_
 
 _play with c-lightning_
 
+with ready scripts:
+
 `host:/home/lightning@ # start_clightning.sh`
 
 `host:/home/lightning@ # stop_clightning.sh`
 
 `host:/home/lightning@ # restart_clightning.sh`
+
+`host:/home/lightning@ # install_fiatjaf_plugins.sh`
+
+or with daemon itself:
+
+`host:/home/lightning@ # lightning-cli help`
 
 _receive on-chain funds to your node_
 
@@ -43,7 +51,7 @@ _or_
 
 `Type "help", "copyright", "credits" or "license" for more information.`
 
-`>>> import bitcoinrpc`
+`>>> import lightning
 
 **Attention! For security purposes this jail has no normal internet connection, while you still can access internet via proxy socks5://192.168.0.199:9050 or http://192.168.0.199:8123**
 
