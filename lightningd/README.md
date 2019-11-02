@@ -31,6 +31,10 @@ _open channel for all available funds to BitBSD LN node_
 
 `host:/home/lightning@ # open-all-in.sh`
 
+_rebalance your node channels_
+
+`host:/home/lightning@ # rebalance_channels.sh`
+
 _edit lightningd config_
 
 `host:/home/lightning@ # [ nano | vim | vi | ee ] ~/.lightning/config`
