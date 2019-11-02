@@ -1,4 +1,4 @@
-### This is bitcoind jail
+### This is c-lightning jail
 Here you go with some basic stuff
 
 _execute bitcoin calls_
