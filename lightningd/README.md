@@ -21,6 +21,8 @@ or with daemon itself:
 
 `host:/home/lightning@ # lightning-cli help`
 
+`host:/home/lightning@ # lightning-cli getinfo`
+
 _receive on-chain funds to your node_
 
 `host:/home/lightning@ # refill_onchain.sh`
