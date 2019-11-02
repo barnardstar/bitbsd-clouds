@@ -7,6 +7,18 @@ _execute bitcoin calls_
 
 _play with c-lightning_
 
+right from your app using [sparko]
+
+[sparko]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko  
+
+ `you@home ~$ curl -k https://bitbsd.org:59401/rpc -d '{"method": "pay", "params": ["lnbc..."]}' -H 'X-Access masterkeythatcandoeverything'`
+
+or from your pc using [client-util]
+
+[client-util]: https://github.com/bitcoin-software/bitbsd-clouds/tree/master/client-util
+
+`you@home ~$ python3.7 cln-cli.py getinfo` 
+
 with ready scripts:
 
 `host:/home/lightning@ # start_clightning.sh`
@@ -62,3 +74,12 @@ _or_
 **Attention! For security purposes this jail has no normal internet connection, while you still can access internet via proxy socks5://192.168.0.199:9050 or http://192.168.0.199:8123**
 
 **Lack of features?** Feel free to contrbute to this set of scripts on https://github.com/bitcoin-software/bitbsd-clouds/
+
+
+[https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
+
+[]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
+
+[]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
+
+[test]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
