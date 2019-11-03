@@ -28,6 +28,8 @@ lndb = workdir + '/nodes.db'
 vpslist = list()
 keys = dict()
 
+default_node = False
+
 
 def sshcmd(pwd, port, cmd, textin=''):
     ssh = paramiko.SSHClient()
@@ -106,6 +108,7 @@ def bc_init():
 
 def loadvps():
     global vpslist
+    global default_node
 
     with shelve.open(lndb) as db:
         vpslist = db['vpslist']
@@ -115,6 +118,7 @@ def loadvps():
 def savevps():
     # Saving the objects:
     global vpslist
+    global default_node
 
     with shelve.open(lndb) as db:
         db['vpslist'] = vpslist

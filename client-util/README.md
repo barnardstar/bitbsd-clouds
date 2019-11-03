@@ -1,3 +1,7 @@
-### Tool and utilities for bitclouds.sh ###
+### BitBSD Watchtower™ ###
 
-`clncli.py getinfo` - cln-cli is a remote command line interface to your c-lightning
+Watchtower is CLI Bitcoin wallet with LN support
+
+`watchtower.py getinfo` - when using in cli it's a remote command line interface to your c-lightning
+
+`./watchtower.py` - if you execute it you'll get fancy
