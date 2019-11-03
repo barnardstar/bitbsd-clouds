@@ -1,2 +1,3 @@
 .idea
 client-util/cln-cli.py
+client-util/cln-info.py
