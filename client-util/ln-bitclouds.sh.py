@@ -29,7 +29,7 @@ vpslist = list()
 keys = dict()
 
 
-def sshcmd(pwd, port, cmd, stdin=''):
+def sshcmd(pwd, port, cmd, textin=''):
     ssh = paramiko.SSHClient()
     ssh.load_system_host_keys()
     ssh.set_missing_host_key_policy(paramiko.WarningPolicy())
@@ -37,7 +37,7 @@ def sshcmd(pwd, port, cmd, stdin=''):
     #chan = ssh.get_transport().open_session()
 
     stdin, stdout, stderr = ssh.exec_command(cmd)
-    stdin.write(stdin)
+    stdin.write(textin)
     stdin.flush()
 
     return stdout.read().decode('utf-8')
@@ -128,6 +128,7 @@ def newnode():
 
     vps = {'status' : 'creating...'}
     retry = 0
+    paid = False
     while (vps['status'] != 'subscribed') or retry > 120:
         dtime = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
         retry += 1
@@ -138,7 +139,9 @@ def newnode():
             img.save('/tmp/bitclouds.png')
             img = Image.open('/tmp/bitclouds.png')
             img.show()
-        if not checkpaid(hostdata['paytostart']):
+
+        if not paid:
+            paid = checkpaid(hostdata['paytostart'])
             print(dtime + ' waiting payment, it will expire in [' + str(600-retry*5) + ' seconds]')
         else:
             print(dtime + ' Payment received! setting up your node...')
@@ -157,22 +160,24 @@ def newnode():
                     print('Saving sparko keys...')
                     vps['sparko_master'] = m.group(1)
                     vps['sparko_read'] = m.group(2)
-                    vps['sparko_read'] = m.group(3)
+                    vps['sparko_rw'] = m.group(3)
 
             print('Copy ssh keys...')
             with open(workdir+"/pwd.tmp", "w") as text_file:
                 text_file.write(vps['ssh_pwd'])
-            os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' +sshkey+ ' lightning@bitbsd.org -p'+vps['ssh_port'])
+            os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' +sshkey+ ' lightning@bitbsd.org -p'+str(vps['ssh_port']))
             os.remove(workdir+"/pwd.tmp")
             print('Saving host...')
             vpslist.append(vps)
             savevps()
+            input('Node ' + vps['address'] + ' created! Press any key to continue...')
+            return True
     return False
 
 
 def listnodes():
     for vps in vpslist:
-        print('node name: ' + vps['address'])
+        print('node name: ' + vps['address'] + "\n" + str(vps))
 
     input('Press any key to continue...')
 
@@ -180,8 +185,6 @@ def listnodes():
 keys = bc_init()
 print('working with ssh key: ' + keys['ssh']['public'])
 print('working with gpg key: ' + str(keys['gpg']['fingerprint']))
-
-time.sleep(1)
 
 # Create the menu
 menu = ConsoleMenu("BitClouds.sh - Open-source VPS platform", "This is Bitcoin CLI wallet with LN support, choose an option:")
@@ -198,15 +201,23 @@ menu = ConsoleMenu("BitClouds.sh - Open-source VPS platform", "This is Bitcoin C
 # as a submenu of another menu
 #submenu_item = SubmenuItem("Submenu item", selection_menu, menu)
 
-create_item = FunctionItem("Create new node", newnode)
-list_item = FunctionItem("List nodes", listnodes)
 
-selection_menu = SelectionMenu(["item1", "item2", "item3"])
+list_item = FunctionItem("List nodes", listnodes)
+create_item = FunctionItem("Create new node", newnode)
+
+vpsnames = list()
+for vps in vpslist:
+    vpsnames.append(vps['address'])
+
+selection_menu = SelectionMenu(vpsnames)
+submenu_item = SubmenuItem("Select default node", selection_menu, menu)
+
 
 # Once we're done creating them, we just add the items to the menu
-if len(vpslist) == 0:
-    menu.append_item(create_item)
-menu.append_item(list_item)
-submenu_item = SubmenuItem("Select default node", selection_menu, menu)
+
+if len(vpslist) > 0:
+    menu.append_item(list_item)
+menu.append_item(submenu_item)
+menu.append_item(create_item)
 # Finally, we call show to show the menu and allow the user to interact
 menu.show()
