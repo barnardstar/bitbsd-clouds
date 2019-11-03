@@ -1,4 +1,33 @@
 ### This is c-lightning jail
+
+`$ curl https://bitclouds.sh/create/lightningd`
+
+````
+{
+  "host": "barnardsstar", 
+  "paytostart": "lnbc3627320p1pwm630spp5twdd9yq5mufat0fagrxr8fjfkhahfcuxuda5lfs9alafvyp0vpwqdq5gfshymnpwfj8x5m5v9eqxqzjccqp2rzjq0hpsr5wupl3l8yeslvckh2aanmt447stz7a3036m97gurwjehrm5zxy4cqq0scqqqqqqqpgqqqqqzqqzsh8z7nj3vqknrumrtv84erxdzpfg5tr5knys5c3r7d2mfpc9dzm6psz4sstzrc36040pntdv9s484au4xdhvc9mvx9a8zcrexnr9h6zqp7gm7kk"
+}
+````
+
+
+`$ curl https://bitclouds.sh/status/barnardsstar`
+
+````
+{
+  "app_port": 51356, 
+  "hours_left": 4, 
+  "ip": "bitbsd.org", 
+  "sparko": "https://bitbsd.org:59330/rpc", 
+  "ssh2onion": "you can ssh directly to your .onion (/home/lightning/onion.domain) on port 22", 
+  "ssh_port": 61732, 
+  "ssh_pwd": "52c27722a7e21dff", 
+  "ssh_usr": "lightning", 
+  "status": "subscribed", 
+  "user_port": 53445
+}
+````
+
+
 Here you go with some basic stuff
 
 _execute bitcoin calls_
@@ -11,7 +40,9 @@ right from your app using [sparko]
 
 [sparko]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko  
 
- `you@home ~$ curl -k https://bitbsd.org:59401/rpc -d '{"method": "pay", "params": ["lnbc..."]}' -H 'X-Access masterkeythatcandoeverything'`
+ `you@home ~$ curl -k https://bitbsd.org:59330/rpc -d '{"method": "pay", "params": ["lnbc..."]}' -H 'X-Access masterkeythatcandoeverything'`
+ 
+ _Note! `https://bitbsd.org:59330/rpc` is "sparko" key in status response and `masterkeythatcandoeverything` can be found inside your jail ~/.lightning/config as "sparko-keys" parameter!_
 
 or from your pc using [client-util]
 
@@ -76,6 +107,12 @@ _or_
 Or you can also simply execute any command with torsocks prefix
 
 `torsocks ssh rmtusr@myserver.domain.com`
+
+However, some programs will work as usual, because proxy enviroment variable is set in ~/.cshrc to use HTTP TORed proxy
+
+`git clone https://github.com/bitcoin-software/bitclouds.sh` # this will work
+
+`curl https://wtfismyip.com` # as well as this
 
 **Lack of features?** Feel free to contrbute to this set of scripts on https://github.com/bitcoin-software/bitbsd-clouds/
 
