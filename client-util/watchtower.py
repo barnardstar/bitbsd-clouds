@@ -567,6 +567,51 @@ def devinfo():
     menu.join()
 
 
+def refillnode():
+    isnum = False
+    while not isnum:
+        try:
+            hours = input("how many hours more you would like to subscribe for? ")
+            val = int(hours)
+        except ValueError:
+            isnum = False
+    request_data = requests.get(bchost + '/topup/' + default_vps['address'] + '/' + str(val*66))
+    if request_data.status_code == 200:
+        invoice = request_data.json()['invoice']
+        print('[BOLT11] ' + invoice + '[/BOLT11]')
+        print('Attemp to pay invoice from node balance...')
+        sparko('pay', invoice)
+        return True
+    else:
+        input('Error: ' + request_data.status_code)
+        return False
+
+
+def refill():
+    request_data = requests.get(bchost + '/status/'+default_vps['address'])
+
+    if request_data.status_code == 200:
+        hostdata = request_data.json()
+    else:
+        input('Error: ' + request_data.status_code)
+        return False
+
+    hours_left = hostdata['hours_left']
+
+    # Create the root menu
+    menu = MultiSelectMenu("Refill node", "Hours left: " + str(hours_left),
+                           epilogue_text=(""),
+                           exit_option_text='Go back')  # Customize the exit text
+
+    # Add all the items to the root menu
+    # menu.append_item(FunctionItem("Pay on-chain", action, args=['one']))
+    menu.append_item(FunctionItem("Top-up node", refillnode))
+
+    # Show the menu
+    menu.start()
+    menu.join()
+
+
 def genmenu():
     topic = "BitClouds.sh - Open-source VPS platform"
     header = "This is Bitcoin CLI wallet with LN support, choose an option:"
@@ -577,6 +622,7 @@ def genmenu():
     dev_info = FunctionItem("RPC / SSH access", devinfo)
     decrypt_backup = FunctionItem("Decrypt backup", debackup)
     do_import = FunctionItem("Import BitBSD c-lightning jail", doimport)
+    refill_node = FunctionItem("Refill node", refill)
     create_item = FunctionItem("Create new node", newnode)
 
     # Create the menu
@@ -587,6 +633,7 @@ def genmenu():
     menu.append_item(setdef(menu, default_node))
     menu.append_item(decrypt_backup)
     menu.append_item(do_import)
+    menu.append_item(refill_node)
     menu.append_item(create_item)
 
     # Finally, we call show to show the menu and allow the user to interact
