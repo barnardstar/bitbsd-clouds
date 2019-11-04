@@ -137,7 +137,7 @@ uploading to web servers
  ###### HERE IS YOUR BACKUP ######
  # Clearnet URL: https://bitbsd.org/backups/cln-109-20191104210055.tar.gpg
  # IPFS: https://bitclouds.link/ipfs/QmUkpdP5RAHa2LMEBp3FSSH7BbhnbrkjpVXjwPBh6MaYwy
- # Onion: http://http://carnikavazp6djqx.onion/cln-109-20191104210055.tar.gpg
+ # Onion: http://carnikavazp6djqx.onion/cln-109-20191104210055.tar.gpg
  ######     END OF LINKS    ######
 clean up locally, on node & ipfs
 should I remove local unencrypted copy of backup? (y/n)n
