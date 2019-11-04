@@ -119,8 +119,4 @@ However, some programs will work as usual, because proxy enviroment variable is 
 
 [https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
 
-[]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
-
-[]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
-
 [test]: https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
