@@ -113,8 +113,6 @@ To use as a interactive CLI-wallet, just run without arguments
 
 ### Features
 
-Built on top of  
-
 Bitcoin and Lightning Network CLI wallet _both interactive and shell_
 
 3-minute setup _nodes are built up from pre-configured and pre-synced [c-lightning instances], so you dont have to wait for anything at all.._
