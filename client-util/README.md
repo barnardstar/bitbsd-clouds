@@ -30,18 +30,40 @@ Then you need install set of dependencies from `requirements.txt`:
 
 ```bash
 setuptools
-gnupg
+python-gnupg
 qrcode
 paramiko
 scp
 console-menu
 Pillow
+pycryptodomex
+
 ```
 
-So install them at once or one by one like:
+So install them at once
+
+ `python3.7 -m pip install setuptools python-gnupg qrcode paramiko scp console-menu Pillow pycryptodomex`
+
+or one by one like
 
 `python3.7 -m pip install setuptools`
 
-`watchtower.py getinfo` - when using in cli it's a remote command line interface to your c-lightning
+### How to use
 
-`./watchtower.py` - if you execute it you'll get fancy
+`watchtower.py getinfo` - when using in cli it is actaully a remote command line interface to your c-lightning, so refer to c-lightning RPC
+
+To use as a interactive CLI-wallet, just run without arguments
+
+`./watchtower.py` 
+
+### Features
+
+Bitcoin and Lightning Network wallet
+
+3-minute setup
+
+Non-custodial wallet
+
+RPC and SSH access to your LN node
+ 
+e2e encrypted backups on decentralized storage (IPFS)
