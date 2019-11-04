@@ -581,7 +581,7 @@ def refillnode():
         invoice = request_data.json()['invoice']
         print('[BOLT11] ' + invoice + ' [/BOLT11]')
         print('Attemp to pay invoice from node balance...')
-        sparko('waitpay', invoice)
+        sparko('waitpay', [invoice])
         return True
     else:
         input('Error: ' + request_data.status_code)
