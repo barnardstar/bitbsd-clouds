@@ -92,15 +92,19 @@ _feel free to use python_
 
 _or_
 
-`host:/home/lightning@ # python3.7 `
+`host:/home/lightning@ # python3.7`
 
-`Python 3.7.4 (default, Aug 22 2019, 05:59:46)`
+```
+
+Python 3.7.4 (default, Aug 22 2019, 05:59:46)
  
-`[Clang 6.0.1 (tags/RELEASE_601/final 335540)] on freebsd12`
+[Clang 6.0.1 (tags/RELEASE_601/final 335540)] on freebsd12
 
-`Type "help", "copyright", "credits" or "license" for more information.`
+Type "help", "copyright", "credits" or "license" for more information.
 
-`>>> import lightning
+>>> import lightning
+
+```
 
 **Attention! For security purposes this jail has no normal internet connection, while you still can access internet via proxy socks5://192.168.0.199:9050 or http://192.168.0.199:8123**
 
