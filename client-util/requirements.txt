@@ -1,7 +1,9 @@
 setuptools
-gnupg
+python-gnupg
 qrcode
 paramiko
 scp
 console-menu
 Pillow
+pycryptodomex
+
