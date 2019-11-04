@@ -1,2 +1,5 @@
 #!/bin/sh
-sudo /usr/local/etc/rc.d/bitcoind restart
+echo "stopping bitcoin"
+killall bitcoind
+echo "starting bitcoin"
+bitcoind -datadir=/var/db/bitcoin/ > /dev/null &

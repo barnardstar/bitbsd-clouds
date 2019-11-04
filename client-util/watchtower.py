@@ -4,7 +4,7 @@ import gnupg
 import datetime
 import shelve
 import qrcode
-
+import sys
 import paramiko
 
 from consolemenu import *
@@ -12,6 +12,8 @@ from consolemenu.items import *
 from PIL import Image
 
 import re
+
+import json
 
 from lncontrol import createvps, getvps, checkpaid
 
@@ -26,16 +28,33 @@ workdir = homedir+'/ln'
 lndb = workdir + '/nodes.db'
 
 vpslist = list()
-keys = dict()
 
 default_node = False
+
+default_vps = dict()
+
+
+def sparko(cmd, params):
+    global default_vps
+    sparko_host = default_vps['sparko']
+    key = default_vps['sparko_master']
+
+    cmd = 'curl -ks ' + sparko_host + ' -d \'{"method":"' + cmd + '", "params": ' + str(
+        params).replace("'", "\"") + '}\' -H \'X-Access: ' + key + '\''
+
+    response = json.loads(os.popen(cmd).read())
+    return response
 
 
 def sshcmd(pwd, port, cmd, textin=''):
     ssh = paramiko.SSHClient()
     ssh.load_system_host_keys()
     ssh.set_missing_host_key_policy(paramiko.WarningPolicy())
-    ssh.connect('bitbsd.org', username='lightning', port=int(port), password=str(pwd))
+    try:
+        ssh.connect('bitbsd.org', username='lightning', port=int(port), key_filename=sshkey)
+    except Exception as e:
+        print(e)
+        ssh.connect('bitbsd.org', username='lightning', port=int(port), password=str(pwd))
     #chan = ssh.get_transport().open_session()
 
     stdin, stdout, stderr = ssh.exec_command(cmd)
@@ -43,6 +62,27 @@ def sshcmd(pwd, port, cmd, textin=''):
     stdin.flush()
 
     return stdout.read().decode('utf-8')
+
+
+def loadvps():
+    global vpslist
+    global default_node
+
+    with shelve.open(lndb) as db:
+        vpslist = db['vpslist']
+        default_node = db['default_node']
+        db.close()
+
+
+def savevps():
+    # Saving the objects:
+    global vpslist
+    global default_node
+
+    with shelve.open(lndb) as db:
+        db['vpslist'] = vpslist
+        db['default_node'] = default_node
+        db.close()
 
 
 def bc_init():
@@ -62,13 +102,15 @@ def bc_init():
         print('Create key dir')
         os.makedirs(keydir)
         os.makedirs(sshdir)
-        if not (os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa') and os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa.pub')):
-            print('Generating ssh keys.. :' + sshdir + '/ssh.key')
-            os.system('ssh-keygen -b 521 -t ecdsa -f ' + sshkey + ' -q -N ""')
-        else:
-            print('Linking existing keys.. ~/.ssh/id_rsa')
-            os.system('ln -s ' + os.getenv("HOME") + '/.ssh/id_rsa.pub' + ' ' + sshkey+'.pub')
-            os.system('ln -s ' + os.getenv("HOME") + '/.ssh/id_rsa' + ' ' + sshkey)
+        #if not (os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa') and os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa.pub')):
+        #    print('Generating ssh keys.. :' + sshdir + '/ssh.key')
+        #    os.system('ssh-keygen -b 521 -t ecdsa -f ' + sshkey + ' -q -N ""')
+        #else:
+        #    print('Linking existing keys.. ~/.ssh/id_rsa')
+        #    os.system('ln -s ' + os.getenv("HOME") + '/.ssh/id_rsa.pub' + ' ' + sshkey+'.pub')
+        #    os.system('ln -s ' + os.getenv("HOME") + '/.ssh/id_rsa' + ' ' + sshkey)
+        print('Generating ssh keys.. :' + sshdir + '/ssh.key')
+        os.system('ssh-keygen -b 521 -t ecdsa -f ' + sshkey + ' -q -N ""')
 
         keys['ssh']['private'] = sshkey
         keys['ssh']['public'] = sshkey+'.pub'
@@ -98,31 +140,12 @@ def bc_init():
         print('Create nodes.db')
         with shelve.open(lndb) as db:
             db['vpslist'] = vpslist
+            db['default_node'] = False
             db.close()
-
     else:
         loadvps()
 
     return keys
-
-
-def loadvps():
-    global vpslist
-    global default_node
-
-    with shelve.open(lndb) as db:
-        vpslist = db['vpslist']
-        db.close()
-
-
-def savevps():
-    # Saving the objects:
-    global vpslist
-    global default_node
-
-    with shelve.open(lndb) as db:
-        db['vpslist'] = vpslist
-        db.close()
 
 
 def newnode():
@@ -173,6 +196,9 @@ def newnode():
             os.remove(workdir+"/pwd.tmp")
             print('Saving host...')
             vpslist.append(vps)
+            if len(vpslist) == 1:
+                global default_node
+                default_node = vps['address']
             savevps()
             input('Node ' + vps['address'] + ' created! Press any key to continue...')
             return True
@@ -186,42 +212,130 @@ def listnodes():
     input('Press any key to continue...')
 
 
+def initdefvps():
+    global default_vps
+    global default_node
+    for vps in vpslist:
+        print(vps)
+        if vps['address'] == default_node:
+            default_vps = vps
+
+
+def setdef(menu, address):
+    global default_node
+    global vpslist
+
+    default_node = address
+    savevps()
+
+    vpsnames = list()
+    selection_menu = SelectionMenu(vpsnames)
+    for vps in vpslist:
+        selection_menu.append_item(FunctionItem(vps['address'], setdef, args=[menu, vps['address']]))
+
+    submenu_item = SubmenuItem("[" + str(default_node) + "] " + " Change default node", selection_menu, menu)
+
+    return submenu_item
+
+
+def paychain():
+    addr = input('Enter address: ')
+    amt = input('Enter amount (sats): ')
+    sure = input('Are you sure want to send ' + str(amt) + ' satoshis to ' + addr + '? (y/n)')
+    if sure == 'y':
+        input(json.dump(sparko('withdraw', [addr, amt, '3000perkb']), indent=4))
+
+
+def payln():
+    bolt = input('BOLT11: ')
+    inv_data = sparko('decodepay', [bolt])
+    sats = round(inv_data['msatoshi'] / 1000, 1)
+    sure = input('Are you sure you want to send ' + str(sats) + '('+inv_data["description"]+')? (y/n)')
+    if sure == 'y':
+        input(json.dump(sparko('waitpay', [bolt]), indent=4))
+
+
+def rcvchain():
+    input(sparko('newaddr', list()))
+
+
+def rcvln():
+    amt = input('Amount?')
+    userdesc = input('Description: ')
+    dtime = datetime.datetime.strftime(datetime.datetime.now(), '%y%m%d-%H:%M:%S')
+    desc = dtime+' watchtower: '+userdesc
+    input('Your invoice: ' + sparko('invoice', [amt, desc, userdesc])['bolt11'])
+
+
+def summary():
+    sumdata = sparko('summary', list())
+    # Create the root menu
+    nodeid = sumdata['my_address'].split('@')[0]
+    menu = MultiSelectMenu(nodeid, "On-chain: " + sumdata['utxo_amount'],
+                           epilogue_text=("LN balance: " + sumdata['avail_out']),
+                           exit_option_text='Exit Application')  # Customize the exit text
+
+    # Add all the items to the root menu
+    # menu.append_item(FunctionItem("Pay on-chain", action, args=['one']))
+    menu.append_item(FunctionItem("Pay on-chain", paychain))
+    menu.append_item(FunctionItem("Receive on-chain", rcvchain))
+    menu.append_item(FunctionItem("Pay over LN", payln))
+    menu.append_item(FunctionItem("Receive over LN", rcvln))
+
+    # Show the menu
+    menu.start()
+    menu.join()
+
+
+def dobackup():
+    global default_vps
+    sure = input('Are you sure want perform backup? This action will turn off your LN node for a while! Proceed? (y/n)')
+    if sure == 'y':
+        input(sshcmd('', default_vps['ssh_port'], 'ls -la'))
+
+
+def doimport():
+    input('imp')
+
+
+def devinfo():
+    global default_vps
+    menu = MultiSelectMenu("curl -X POST "+default_vps['sparko'] + " \ ",
+                           " -d '{\"method\": \"getinfo\"}' -H 'X-Access: grabyourkeyinside'",
+                           epilogue_text=('ssh lightning@bitbsd.org -p '+ str(default_vps['ssh_port'])),
+                           exit_option_text='Exit Application')  # Customize the exit text
+
+    menu.start()
+    menu.join()
+
+
+def genmenu():
+    topic = "BitClouds.sh - Open-source VPS platform"
+    header = "This is Bitcoin CLI wallet with LN support, choose an option:"
+    menu = ConsoleMenu(topic, header)
+
+    get_summary = FunctionItem("Wallet", summary)
+    do_backup = FunctionItem("Perform cold backup", dobackup)
+    dev_info = FunctionItem("RPC / SSH access", devinfo)
+    do_import = FunctionItem("Import BitBSD c-lightning jail", doimport)
+    create_item = FunctionItem("Create new node", newnode)
+
+    # Create the menu
+    if len(vpslist) > 0:
+        menu.append_item(get_summary)
+        menu.append_item(do_backup)
+        menu.append_item(dev_info)
+    menu.append_item(do_import)
+    menu.append_item(setdef(menu, default_node))
+    menu.append_item(create_item)
+
+    # Finally, we call show to show the menu and allow the user to interact
+    menu.show()
+
+
 keys = bc_init()
 print('working with ssh key: ' + keys['ssh']['public'])
 print('working with gpg key: ' + str(keys['gpg']['fingerprint']))
+initdefvps()
+genmenu()
 
-# Create the menu
-menu = ConsoleMenu("BitClouds.sh - Open-source VPS platform", "This is Bitcoin CLI wallet with LN support, choose an option:")
-
-# Create some items
-
-# A FunctionItem runs a Python function when selected
-#function_item = FunctionItem("Create new node", newln(), ["Enter an input"])
-# A CommandItem runs a console command
-#command_item = CommandItem("Run a console command",  "touch hello.txt")
-# A SelectionMenu constructs a menu from a list of strings
-#selection_menu = SelectionMenu(["item1", "item2", "item3"])
-# A SubmenuItem lets you add a menu (the selection_menu above, for example)
-# as a submenu of another menu
-#submenu_item = SubmenuItem("Submenu item", selection_menu, menu)
-
-
-list_item = FunctionItem("List nodes", listnodes)
-create_item = FunctionItem("Create new node", newnode)
-
-vpsnames = list()
-for vps in vpslist:
-    vpsnames.append(vps['address'])
-
-selection_menu = SelectionMenu(vpsnames)
-submenu_item = SubmenuItem("Select default node", selection_menu, menu)
-
-
-# Once we're done creating them, we just add the items to the menu
-
-if len(vpslist) > 0:
-    menu.append_item(list_item)
-menu.append_item(submenu_item)
-menu.append_item(create_item)
-# Finally, we call show to show the menu and allow the user to interact
-menu.show()

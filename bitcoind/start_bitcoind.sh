@@ -1,2 +1,3 @@
 #!/bin/sh
-sudo /usr/local/etc/rc.d/bitcoind start
+echo "starting bitcoin"
+bitcoind -datadir=/var/db/bitcoin/ > /dev/null &

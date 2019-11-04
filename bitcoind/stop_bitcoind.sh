@@ -1,2 +1,3 @@
 #!/bin/sh
-sudo /usr/local/etc/rc.d/bitcoind stop
+echo "stoppping bitcoin"
+killall bitcoind
