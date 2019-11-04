@@ -132,16 +132,13 @@ clightning.tar.gpg progress: 0%
 clightning.tar.gpg progress: 56%   
 clightning.tar.gpg progress: 89%   
 clightning.tar.gpg progress: 100%   
-
 uploading to ipfs server
 uploading to web servers
-
  ###### HERE IS YOUR BACKUP ######
  # Clearnet URL: https://bitbsd.org/backups/cln-109-20191104210055.tar.gpg
  # IPFS: https://bitclouds.link/ipfs/QmUkpdP5RAHa2LMEBp3FSSH7BbhnbrkjpVXjwPBh6MaYwy
  # Onion: http://http://carnikavazp6djqx.onion/cln-109-20191104210055.tar.gpg
  ######     END OF LINKS    ######
-
 clean up locally, on node & ipfs
 should I remove local unencrypted copy of backup? (y/n)n
 moved to /tmp/cln-backup-191104-21:03:14.tar
