@@ -579,9 +579,9 @@ def refillnode():
     request_data = requests.get(bchost + '/topup/' + default_vps['address'] + '/' + str(val*66))
     if request_data.status_code == 200:
         invoice = request_data.json()['invoice']
-        print('[BOLT11] ' + invoice + '[/BOLT11]')
+        print('[BOLT11] ' + invoice + ' [/BOLT11]')
         print('Attemp to pay invoice from node balance...')
-        sparko('pay', invoice)
+        sparko('waitpay', invoice)
         return True
     else:
         input('Error: ' + request_data.status_code)
