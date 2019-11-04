@@ -10,9 +10,7 @@ import qrcode
 import sys
 import paramiko
 import fileinput
-import base64
 
-from io import StringIO
 from scp import SCPClient, SCPException
 from consolemenu import *
 from consolemenu.items import *
@@ -89,7 +87,6 @@ def sparko(cmd, params):
 
 
 def ssh_genkeys(keyfile, pem=True):
-    from Crypto.Hash import SHA256
     from Cryptodome.PublicKey import RSA
     key = RSA.generate(2048)
     public = key.publickey().exportKey('OpenSSH').decode('utf-8')

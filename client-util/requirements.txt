@@ -1,0 +1,7 @@
+setuptools
+gnupg
+qrcode
+paramiko
+scp
+console-menu
+Pillow
