@@ -1,12 +1,17 @@
 import os
 import time
+import random
 import gnupg
 import datetime
 import shelve
 import qrcode
 import sys
 import paramiko
+import fileinput
+import base64
 
+from io import StringIO
+from scp import SCPClient, SCPException
 from consolemenu import *
 from consolemenu.items import *
 from PIL import Image
@@ -46,14 +51,37 @@ def sparko(cmd, params):
     return response
 
 
+def ssh_genkeys(keyfile, pem=True):
+    from Crypto.Hash import SHA256
+    from Cryptodome.PublicKey import RSA
+    key = RSA.generate(2048)
+    public = key.publickey().exportKey('OpenSSH').decode('utf-8')
+    private = key.exportKey('PEM').decode('ascii')
+
+    f = open(keyfile, "w")
+    f.write(private)
+    f.close()
+
+    f = open(keyfile+'.pub', "w")
+    f.write(public)
+    f.close()
+
+    os.system('chmod 600 ' + keyfile)
+
+
 def sshcmd(pwd, port, cmd, textin=''):
     ssh = paramiko.SSHClient()
     ssh.load_system_host_keys()
     ssh.set_missing_host_key_policy(paramiko.WarningPolicy())
+    #f = open(sshkey, 'r')
+    #s = f.read()
+    #keyfile = StringIO(s)
+    #pkey = paramiko.RSAKey.from_private_key(keyfile)
     try:
-        ssh.connect('bitbsd.org', username='lightning', port=int(port), key_filename=sshkey)
+        ssh.connect('bitbsd.org', username='lightning', port=int(port), key_filename=sshkey, look_for_keys=False)
     except Exception as e:
-        print(e)
+        #print('!!!!!!!!!!!!!!!' + sshkey)
+        #print(e)
         ssh.connect('bitbsd.org', username='lightning', port=int(port), password=str(pwd))
     #chan = ssh.get_transport().open_session()
 
@@ -62,6 +90,59 @@ def sshcmd(pwd, port, cmd, textin=''):
     stdin.flush()
 
     return stdout.read().decode('utf-8')
+
+
+def progress(filename, size, sent):
+    prc = float(sent) / float(size) * 100
+    line = ("%s\'s progress: %.0f%%   \r" % (filename, prc))
+    divpart = round(prc, 2)*100 - int(prc)*100
+    if divpart < 2:
+        print(line)
+
+
+def sshupload(file, remote_directory):
+    global default_vps
+    """Upload a single file to a remote directory"""
+    ssh = paramiko.SSHClient()
+    ssh.load_system_host_keys()
+    ssh.set_missing_host_key_policy(paramiko.WarningPolicy())
+    #f = open(sshkey, 'r')
+    #s = f.read()
+    #keyfile = StringIO(s)
+    #pkey = paramiko.RSAKey.from_private_key(keyfile)
+    ssh.connect('bitbsd.org', username='lightning', port=default_vps['ssh_port'], key_filename=sshkey, look_for_keys=False)
+
+    scp = SCPClient(ssh.get_transport(), progress=progress)
+    try:
+        scp.put(file,
+                recursive=True,
+                remote_path=remote_directory)
+    except SCPException:
+        print('scp error')
+    finally:
+        scp.close()
+    ssh.close()
+
+
+def sshdownload(remote_path, local_path):
+    global default_vps
+    """Upload a single file to a remote directory"""
+    ssh = paramiko.SSHClient()
+    ssh.load_system_host_keys()
+    ssh.set_missing_host_key_policy(paramiko.WarningPolicy())
+    #f = open(sshkey, 'r')
+    #s = f.read()
+    #keyfile = StringIO(s)
+    #pkey = paramiko.RSAKey.from_private_key(keyfile)
+    ssh.connect('bitbsd.org', username='lightning', port=default_vps['ssh_port'], key_filename=sshkey, look_for_keys=False)
+    scp = SCPClient(ssh.get_transport(), progress=progress)
+    try:
+        scp.get(remote_path,local_path)
+    except SCPException as e:
+        print('scp error' + str(e))
+    finally:
+        scp.close()
+    ssh.close()
 
 
 def loadvps():
@@ -83,6 +164,13 @@ def savevps():
         db['vpslist'] = vpslist
         db['default_node'] = default_node
         db.close()
+
+
+def replaceAll(file,searchExp,replaceExp):
+    for line in fileinput.input(file, inplace=1):
+        if searchExp in line:
+            line = line.replace(searchExp,replaceExp)
+        sys.stdout.write(line)
 
 
 def bc_init():
@@ -110,8 +198,10 @@ def bc_init():
         #    os.system('ln -s ' + os.getenv("HOME") + '/.ssh/id_rsa.pub' + ' ' + sshkey+'.pub')
         #    os.system('ln -s ' + os.getenv("HOME") + '/.ssh/id_rsa' + ' ' + sshkey)
         print('Generating ssh keys.. :' + sshdir + '/ssh.key')
-        os.system('ssh-keygen -b 521 -t ecdsa -f ' + sshkey + ' -q -N ""')
-
+        #os.system('ssh-keygen -t rsa -b 2048  -f ' + sshkey + ' -q -N ""')
+        ssh_genkeys(sshkey)
+        #replaceAll(sshkey, '-----BEGIN OPENSSH PRIVATE KEY-----', '-----BEGIN RSA PRIVATE KEY-----')
+        #replaceAll(sshkey, '-----END OPENSSH PRIVATE KEY-----', '-----END RSA PRIVATE KEY-----')
         keys['ssh']['private'] = sshkey
         keys['ssh']['public'] = sshkey+'.pub'
         os.makedirs(gpgdir)
@@ -158,9 +248,8 @@ def newnode():
     paid = False
     while (vps['status'] != 'subscribed') or retry > 120:
         dtime = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
-        retry += 1
         vps = getvps(hostdata['host'])
-        if retry == 1:
+        if retry == 0:
             print(dtime + ' Pay this invoice: ' + hostdata['paytostart'])
             img = qrcode.make(hostdata['paytostart'])
             img.save('/tmp/bitclouds.png')
@@ -169,10 +258,13 @@ def newnode():
 
         if not paid:
             paid = checkpaid(hostdata['paytostart'])
-            print(dtime + ' waiting payment, it will expire in [' + str(600-retry*5) + ' seconds]')
+            print(dtime + ' waiting payment, it will expire in [' + str(600-retry) + ' seconds]')
         else:
             print(dtime + ' Payment received! setting up your node...')
-        time.sleep(5)
+
+        sleeptime = random.randrange(5,15)
+        retry += sleeptime
+        time.sleep(sleeptime)
 
         if vps['status'] == 'subscribed':
             print('Now we do stuff!')
@@ -192,7 +284,7 @@ def newnode():
             print('Copy ssh keys...')
             with open(workdir+"/pwd.tmp", "w") as text_file:
                 text_file.write(vps['ssh_pwd'])
-            os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' +sshkey+ ' lightning@bitbsd.org -p'+str(vps['ssh_port']))
+            os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' +sshkey+ ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p'+str(vps['ssh_port']))
             os.remove(workdir+"/pwd.tmp")
             print('Saving host...')
             vpslist.append(vps)
@@ -200,7 +292,7 @@ def newnode():
                 global default_node
                 default_node = vps['address']
             savevps()
-            input('Node ' + vps['address'] + ' created! Press any key to continue...')
+            input('Node ' + vps['address'] + ' created! You need to restart Watchtower to apply changes...')
             return True
     return False
 
@@ -271,9 +363,9 @@ def summary():
     sumdata = sparko('summary', list())
     # Create the root menu
     nodeid = sumdata['my_address'].split('@')[0]
-    menu = MultiSelectMenu(nodeid, "On-chain: " + sumdata['utxo_amount'],
-                           epilogue_text=("LN balance: " + sumdata['avail_out']),
-                           exit_option_text='Exit Application')  # Customize the exit text
+    menu = MultiSelectMenu(nodeid, "On-chain: " + str(int(float(sumdata['utxo_amount'].strip('btc'))*100000000))+ " sats ("+ sumdata['utxo_amount']+")",
+                           epilogue_text=("LN balance: " + str(int(float(sumdata['avail_out'].strip('btc'))*100000000)) + " sats (" + sumdata['avail_out']+")"),
+                           exit_option_text='Go back')  # Customize the exit text
 
     # Add all the items to the root menu
     # menu.append_item(FunctionItem("Pay on-chain", action, args=['one']))
@@ -290,21 +382,118 @@ def summary():
 def dobackup():
     global default_vps
     sure = input('Are you sure want perform backup? This action will turn off your LN node for a while! Proceed? (y/n)')
+    print('loading encryption keys')
+    gpg = gnupg.GPG(gnupghome=keydir + '/gpg')
     if sure == 'y':
-        input(sshcmd('', default_vps['ssh_port'], 'ls -la'))
+        print('test connection')
+        print(sshcmd('', default_vps['ssh_port'], 'uptime'))
+        start = time.time()
+        print('stopping cln')
+        print(sshcmd('', default_vps['ssh_port'], 'su - lightning -c "/usr/local/bin/stop_lightningd.sh"'))
+        print('making archive')
+        print(sshcmd('', default_vps['ssh_port'], 'rm -rf /tmp/bck.tar || true'))
+        print(sshcmd('', default_vps['ssh_port'], 'su - lightning -c "/usr/bin/tar -cf /tmp/bck.tar /usr/home/lightning/.lightning"'))
+        print('starting cln')
+        print(sshcmd('', default_vps['ssh_port'], 'su - lightning -c "/usr/local/bin/lightningd --daemon > /dev/null &"'))
+        secs = time.time() - start
+        print('started.. node was offline for ' + str(int(secs)) + ' seconds')
+        print('downloading backup archive to local storage')
+        sshdownload('/tmp/bck.tar', '/tmp/bck.tar')
+        print('encrypting archive locally with GPG')
+        with open('/tmp/bck.tar', 'rb') as f:
+            status = gpg.encrypt_file(
+                f, recipients=['lnuser@bitclouds.sh'],
+                output='/tmp/clightning.tar.gpg')
+        print('clean & upload encrypted archive to server')
+        os.remove('/tmp/bck.tar')
+        sshupload('/tmp/clightning.tar.gpg', '/tmp/clightning.tar.gpg')
+        print('uploading archive to node')
+        randnum = random.randrange(100,999)
+        fname = 'cln-' + str(randnum) + '-' + str(datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d%H%M%S.tar.gpg'))
+        print(sshcmd('', default_vps['ssh_port'], 'scp /tmp/clightning.tar.gpg ipfs:/tmp/'+fname))
+        print('uploading to ipfs server')
+        ipfs_out = sshcmd('', default_vps['ssh_port'], 'ssh ipfs "/usr/local/bin/ipfs-go add /tmp/'+fname+'"')
+        print('uploading to web servers')
+        print(sshcmd('', default_vps['ssh_port'], 'scp /tmp/clightning.tar.gpg web:/usr/local/www/nginx/backups/' + fname))
+
+        m = re.search('added ([a-zA-Z0-9]+) cln', ipfs_out)
+        ipfs_hash = m.group(1)
+        print(' ###### HERE IS YOUR BACKUP ######\n\n')
+        print(' # Clearnet URL: https://bitbsd.org/backups/' + fname)
+        print(' # IPFS: https://bitclouds.link/ipfs/' + ipfs_hash)
+        print(' # Onion: http://http://carnikavazp6djqx.onion/' + fname)
+
+        print('\n ######     END OF LINKS    ######')
+        print('clean up locally, on node & ipfs')
+        os.remove('/tmp/clightning.tar.gpg')
+        print(sshcmd('', default_vps['ssh_port'], 'rm -f /tmp/clightning.tar.gpg'))
+        print(sshcmd('', default_vps['ssh_port'], 'ssh ipfs "rm -f /tmp/' + fname + '"'))
+        input('seems like we finished! press any key...')
+        return True
 
 
 def doimport():
-    input('imp')
+    ssh_port = input('enter ssh port: ')
+    ssh_pwd = input('enter ssh password: ')
+    host_name = input('enter host name: ')
+    vps = getvps(host_name)
+
+    print('Now we do stuff!')
+    global vpslist
+    print('Fetching sparko keys...')
+    cln_config = sshcmd(ssh_pwd, ssh_port, 'cat /usr/home/lightning/.lightning/config')
+    reslist = cln_config.splitlines()
+
+    for res in reslist:
+        if res.startswith('sparko-keys'):
+            print(res)
+            m = re.search('sparko-keys=([a-zA-Z0-9]+);([a-zA-Z0-9]+):[a-zA-Z0-9+,]+;([a-zA-Z0-9]+):', res)
+            print('Saving sparko keys...')
+            vps['sparko_master'] = m.group(1)
+            vps['sparko_read'] = m.group(2)
+            vps['sparko_rw'] = m.group(3)
+
+    print('Copy ssh keys...')
+    with open(workdir + "/pwd.tmp", "w") as text_file:
+        text_file.write(vps['ssh_pwd'])
+    os.system(
+        'sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' + sshkey + ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p' + str(
+            vps['ssh_port']))
+    os.remove(workdir + "/pwd.tmp")
+    print('Saving host...')
+    vpslist.append(vps)
+    if len(vpslist) == 1:
+        global default_node
+        default_node = vps['address']
+    savevps()
+    input('Node ' + vps['address'] + ' created! You need to restart Watchtower to apply changes...')
+    return True
+
+
+def debackup():
+    gpg = gnupg.GPG(gnupghome=gpgdir)
+    path = input('enter filename path: ')
+    with open(path, 'rb') as f:
+        dtime = datetime.datetime.strftime(datetime.datetime.now(), '%y%m%d-%H:%M:%S')
+        output_path = os.getenv("HOME") + "/CLN-BACKUP-"+dtime+".tar"
+        status = gpg.decrypt_file(f, passphrase='my passphrase', output=output_path)
+
+        print('ok: ', status.ok)
+        print('status: ', status.status)
+        print('stderr: ', status.stderr)
+    input('your backup file is in ' + os.getenv("HOME") + '/CLN-BACKUP.tar | Press any key to continue...')
+    return output_path
 
 
 def devinfo():
     global default_vps
     menu = MultiSelectMenu("curl -X POST "+default_vps['sparko'] + " \ ",
                            " -d '{\"method\": \"getinfo\"}' -H 'X-Access: grabyourkeyinside'",
-                           epilogue_text=('ssh lightning@bitbsd.org -p '+ str(default_vps['ssh_port'])),
-                           exit_option_text='Exit Application')  # Customize the exit text
+                           epilogue_text=('ssh lightning@bitbsd.org -p '+ str(default_vps['ssh_port']) + ' -i ' + sshkey),
+                           exit_option_text='Go back')  # Customize the exit text
 
+    command_item = CommandItem("Connect via SSH", 'ssh lightning@bitbsd.org -p ' + str(default_vps['ssh_port']) + ' -i ' + sshkey)
+    menu.append_item(command_item)
     menu.start()
     menu.join()
 
@@ -317,6 +506,7 @@ def genmenu():
     get_summary = FunctionItem("Wallet", summary)
     do_backup = FunctionItem("Perform cold backup", dobackup)
     dev_info = FunctionItem("RPC / SSH access", devinfo)
+    decrypt_backup = FunctionItem("Decrypt backup", debackup)
     do_import = FunctionItem("Import BitBSD c-lightning jail", doimport)
     create_item = FunctionItem("Create new node", newnode)
 
@@ -325,8 +515,8 @@ def genmenu():
         menu.append_item(get_summary)
         menu.append_item(do_backup)
         menu.append_item(dev_info)
-    menu.append_item(do_import)
     menu.append_item(setdef(menu, default_node))
+    menu.append_item(do_import)
     menu.append_item(create_item)
 
     # Finally, we call show to show the menu and allow the user to interact
