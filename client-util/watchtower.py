@@ -286,6 +286,17 @@ def newnode():
                 text_file.write(vps['ssh_pwd'])
             os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' +sshkey+ ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p'+str(vps['ssh_port']))
             os.remove(workdir+"/pwd.tmp")
+            pwd = '1'
+            pwd2 = '2'
+            while not (pwd == pwd2) and (pwd != '') and (len(pwd) < 6):
+                pwd = input("Enter new password for instance (REQUIRED):")
+                pwd2 = input("Re-enter new password for instance (REQUIRED):")
+                if pwd != pwd2:
+                    print('Password mismatch or too short! re-try again...')
+            if pwd == pwd2:
+                vps['ssh_pass'] = pwd
+                os.system('ssh -i' +sshkey+ ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p'+str(vps['ssh_port']) + ' "cps "+' + pwd)
+            # echo \"{{ pwd }}\" | pw usermod lightning -h0
             print('Saving host...')
             vpslist.append(vps)
             if len(vpslist) == 1:
@@ -460,6 +471,18 @@ def doimport():
         'sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' + sshkey + ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p' + str(
             vps['ssh_port']))
     os.remove(workdir + "/pwd.tmp")
+
+    pwd = '1'
+    pwd2 = '2'
+    while not (pwd == pwd2) and (pwd != '') and (len(pwd) < 6):
+        pwd = input("Enter new password for instance (REQUIRED):")
+        pwd2 = input("Re-enter new password for instance (REQUIRED):")
+        if pwd != pwd2:
+            print('Password mismatch or too short! re-try again...')
+    if pwd == pwd2:
+        vps['ssh_pass'] = pwd
+        os.system()
+
     print('Saving host...')
     vpslist.append(vps)
     if len(vpslist) == 1:
@@ -513,9 +536,10 @@ def genmenu():
     # Create the menu
     if len(vpslist) > 0:
         menu.append_item(get_summary)
-        menu.append_item(do_backup)
         menu.append_item(dev_info)
+        menu.append_item(do_backup)
     menu.append_item(setdef(menu, default_node))
+    menu.append_item(decrypt_backup)
     menu.append_item(do_import)
     menu.append_item(create_item)
 
