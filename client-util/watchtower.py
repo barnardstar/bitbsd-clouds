@@ -573,6 +573,7 @@ def refillnode():
         try:
             hours = input("how many hours more you would like to subscribe for? ")
             val = int(hours)
+            isnum = True
         except ValueError:
             isnum = False
     request_data = requests.get(bchost + '/topup/' + default_vps['address'] + '/' + str(val*66))
