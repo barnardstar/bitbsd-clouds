@@ -551,5 +551,36 @@ keys = bc_init()
 print('working with ssh key: ' + keys['ssh']['public'])
 print('working with gpg key: ' + str(keys['gpg']['fingerprint']))
 initdefvps()
-genmenu()
+
+try:
+
+    sparko_host = default_vps['sparko']
+    key = default_vps['sparko_master']
+
+    num = 1
+    cmd = sys.argv[num]
+    params = list()
+    while num < 10:
+        num += 1
+        try:
+            params.append(sys.argv[num])
+        except IndexError as e:
+            pass
+    payload = {
+            'method': cmd,
+            "params": params
+        }
+
+    if cmd is not 'getinfo':
+        payload['params'] = params
+
+    cmd = 'curl -ks '+sparko_host+' -d \'{"method":"'+ cmd +'", "params": '+str(params).replace("'", "\"")+'}\' -H \'X-Access: '+key+'\''
+    #print('executing: ' + cmd)
+
+    response = json.loads(os.popen(cmd).read())
+    #os.system('clear')
+    result = json.dumps(response,sort_keys=True, indent=4)
+
+except Exception:
+    genmenu()
 
