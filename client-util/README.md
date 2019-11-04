@@ -113,17 +113,26 @@ To use as a interactive CLI-wallet, just run without arguments
 
 ### Features
 
+Built on top of  
+
 Bitcoin and Lightning Network CLI wallet _both interactive and shell_
 
-3-minute setup _nodes are built up from pre-configured and pre-synced instances, so you dont have to wait at all.._
+3-minute setup _nodes are built up from pre-configured and pre-synced [c-lightning instances], so you dont have to wait for anything at all.._
+
+[c-lightning instances]:https://bitcoin-software.github.io/bitbsd-clouds/lightningd/
 
 Non-custodial wallet _you own your dedicated LN node in secure enviroment_
 
-RPC and SSH access to your LN node _start your app development instantly!_
+[REST API] and SSH access to your LN node _start your app development instantly!_
+
+[REST API]:https://github.com/fiatjaf/lightningd-gjson-rpc/tree/master/cmd/sparko
 
 ![wallet](https://i.imgur.com/Qvmdrbj.png "Watchtower")
  
-e2e encrypted backups on decentralized storage (IPFS)
+e2e encrypted backups on [decentralized content network - IPFS.io]
+
+[decentralized content network - IPFS.io]:https://bitclouds.link/ipfs/QmTDmZboyknLcc4g4BitePVd29vU9KrYcTbvkcoBMchNxV
+
 
 ```bash
 Are you sure want perform backup? This action will turn off your LN node for a while! Proceed? (y/n)y
