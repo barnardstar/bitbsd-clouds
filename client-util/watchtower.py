@@ -1,9 +1,11 @@
+#!/usr/bin/python3.7
 import os
 import time
 import random
 import gnupg
 import datetime
 import shelve
+import requests
 import qrcode
 import sys
 import paramiko
@@ -20,7 +22,42 @@ import re
 
 import json
 
-from lncontrol import createvps, getvps, checkpaid
+
+bchost = 'https://bitclouds.sh'
+
+
+def createvps():
+    request_data = requests.get(bchost + '/create/lightningd')
+
+    if request_data.status_code == 200:
+        hostdata = request_data.json()
+        return hostdata
+    else:
+        print('Error: ' + request_data.status_code)
+        return False
+
+
+def checkpaid(invoice):
+    request_data = requests.get(bchost + '/chkinv/'+invoice)
+
+    if request_data.status_code == 200:
+        data = request_data.json()
+        if data['status'] == 'paid':
+            return True
+    else:
+        print('Error: ' + request_data.status_code)
+        return False
+
+
+def getvps(address):
+    request_data = requests.get(bchost + '/status/'+address)
+
+    if request_data.status_code == 200:
+        node_data = request_data.json()
+        node_data['address'] = address
+        return node_data
+    else:
+        return False
 
 
 homedir = os.getenv("HOME")+'/.bitclouds'
@@ -174,7 +211,7 @@ def replaceAll(file,searchExp,replaceExp):
 
 
 def bc_init():
-    print('Do we have workdir? ' + str(os.path.exists(homedir)))
+    #print('Do we have workdir? ' + str(os.path.exists(homedir)))
 
     keys = {
         'ssh': {
@@ -215,11 +252,11 @@ def bc_init():
         gpgkey = gpg.list_keys()[0]
         keys['gpg'] = gpgkey
     else:
-        print('importing gpg keys')
+        #print('importing gpg keys')
         gpg = gnupg.GPG(gnupghome=keydir + '/gpg')
         gpgkey = gpg.list_keys()[0]
         keys['gpg'] = gpgkey
-        print('importing ssh keys')
+        #print('importing ssh keys')
         keys['ssh']['private'] = sshkey
         keys['ssh']['public'] = sshkey + '.pub'
 
@@ -467,9 +504,7 @@ def doimport():
     print('Copy ssh keys...')
     with open(workdir + "/pwd.tmp", "w") as text_file:
         text_file.write(vps['ssh_pwd'])
-    os.system(
-        'sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' + sshkey + ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p' + str(
-            vps['ssh_port']))
+    os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' + sshkey + ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p' + str(vps['ssh_port']))
     os.remove(workdir + "/pwd.tmp")
 
     pwd = '1'
@@ -481,7 +516,6 @@ def doimport():
             print('Password mismatch or too short! re-try again...')
     if pwd == pwd2:
         vps['ssh_pass'] = pwd
-        os.system()
 
     print('Saving host...')
     vpslist.append(vps)
@@ -547,40 +581,40 @@ def genmenu():
     menu.show()
 
 
-keys = bc_init()
-print('working with ssh key: ' + keys['ssh']['public'])
-print('working with gpg key: ' + str(keys['gpg']['fingerprint']))
-initdefvps()
+def main():
+    keys = bc_init()
+    #print('working with ssh key: ' + keys['ssh']['public'])
+    #print('working with gpg key: ' + str(keys['gpg']['fingerprint']))
+    initdefvps()
 
-try:
+    try:
+        sparko_host = default_vps['sparko']
+        key = default_vps['sparko_master']
+        num = 1
+        cmd = sys.argv[num]
+        params = list()
 
-    sparko_host = default_vps['sparko']
-    key = default_vps['sparko_master']
+        while num < 10:
+            num += 1
+            try:
+                params.append(sys.argv[num])
+            except IndexError as e:
+                pass
+        payload = {
+                'method': cmd,
+                "params": params
+            }
 
-    num = 1
-    cmd = sys.argv[num]
-    params = list()
-    while num < 10:
-        num += 1
-        try:
-            params.append(sys.argv[num])
-        except IndexError as e:
-            pass
-    payload = {
-            'method': cmd,
-            "params": params
-        }
+        if cmd is not 'getinfo':
+            payload['params'] = params
 
-    if cmd is not 'getinfo':
-        payload['params'] = params
+        cmd = 'curl -ks '+sparko_host+' -d \'{"method":"'+ cmd +'", "params": '+str(params).replace("'", "\"")+'}\' -H \'X-Access: '+key+'\''
 
-    cmd = 'curl -ks '+sparko_host+' -d \'{"method":"'+ cmd +'", "params": '+str(params).replace("'", "\"")+'}\' -H \'X-Access: '+key+'\''
-    #print('executing: ' + cmd)
+        response = json.loads(os.popen(cmd).read())
+        result = json.dumps(response,sort_keys=True, indent=4)
+        print(result)
+    except Exception:
+        genmenu()
 
-    response = json.loads(os.popen(cmd).read())
-    #os.system('clear')
-    result = json.dumps(response,sort_keys=True, indent=4)
-
-except Exception:
-    genmenu()
-
+if __name__ == "__main__":
+    main()
