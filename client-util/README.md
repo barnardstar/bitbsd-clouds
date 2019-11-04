@@ -1,8 +1,8 @@
 ### BitClouds.sh Watchtower™ ###
-
+    
 Watchtower is CLI Bitcoin wallet with LN support
 
-![wallet](https://i.imgur.com/2b33Tsg.png "Watchtower")
+![wallet](https://i.imgur.com/klk0Evn.png "Watchtower")
 
 ### Download ###
 
