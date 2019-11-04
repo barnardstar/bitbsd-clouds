@@ -128,10 +128,10 @@ downloading backup archive to local storage
 encrypting archive locally with GPG
 upload encrypted archive to server
 uploading archive to node
-b'clightning.tar.gpg''s progress: 0%   
-b'clightning.tar.gpg''s progress: 56%   
-b'clightning.tar.gpg''s progress: 89%   
-b'clightning.tar.gpg''s progress: 100%   
+clightning.tar.gpg progress: 0%   
+clightning.tar.gpg progress: 56%   
+clightning.tar.gpg progress: 89%   
+clightning.tar.gpg' progress: 100%   
 
 uploading to ipfs server
 uploading to web servers
