@@ -465,7 +465,7 @@ def dobackup():
         print(' ###### HERE IS YOUR BACKUP ######\n\n')
         print(' # Clearnet URL: https://bitbsd.org/backups/' + fname)
         print(' # IPFS: https://bitclouds.link/ipfs/' + ipfs_hash)
-        print(' # Onion: http://http://carnikavazp6djqx.onion/' + fname)
+        print(' # Onion: http://carnikavazp6djqx.onion/' + fname)
 
         print('\n ######     END OF LINKS    ######')
         print('clean up locally, on node & ipfs')

@@ -100,16 +100,84 @@ To use as a interactive CLI-wallet, just run without arguments
 
 ### Features
 
-Bitcoin and Lightning Network wallet
+Bitcoin and Lightning Network CLI wallet _both interactive and shell_
 
-3-minute setup
+3-minute setup _nodes are built up from pre-configured and pre-synced instances, so you dont have to wait at all.._
 
-Non-custodial wallet
+Non-custodial wallet _you own your dedicated LN node in secure enviroment_
 
-RPC and SSH access to your LN node
+RPC and SSH access to your LN node _start your app development instantly!_
 
 ![wallet](https://i.imgur.com/Qvmdrbj.png "Watchtower")
  
 e2e encrypted backups on decentralized storage (IPFS)
 
+```bash
+Are you sure want perform backup? This action will turn off your LN node for a while! Proceed? (y/n)y
+loading encryption keys
+test connection
+ 7:56PM  up 29 days, 11:48, 0 users, load averages: 0.41, 0.43, 0.38
+
+stopping cln
+In order to search for a string in some files, use 'grep' like this:
+
+	 grep "string" filename1 [filename2 filename3 ...]
+
+This will print out the lines in the files that contain the string.  grep can
+also do a lot more advanced searches - type 'man grep' for details.
+stopping c-lightning
+stopped!
+
+making archive
+
+To easily configure your installed FreeBSD use bsdconfig(8).
+
+		-- Lars Engels <lme@FreeBSD.org>
+
+starting cln
+Need to do a search in a manpage or in a file you've sent to a pager? Use
+"/search_word". To repeat the same search, type "n" for next or "p" for
+previous.
+		-- Dru <genesis@istar.ca>
+
+started.. node was offline for 5 seconds
+downloading backup archive to local storage
+/tmp/bck.tar's progress: 0%   
+/tmp/bck.tar's progress: 43%   
+/tmp/bck.tar's progress: 100%   
+encrypting archive locally with GPG
+upload encrypted archive to server
+uploading archive to node
+b'clightning.tar.gpg''s progress: 0%   
+b'clightning.tar.gpg''s progress: 56%   
+b'clightning.tar.gpg''s progress: 89%   
+b'clightning.tar.gpg''s progress: 100%   
+
+uploading to ipfs server
+uploading to web servers
+
+ ###### HERE IS YOUR BACKUP ######
+ # Clearnet URL: https://bitbsd.org/backups/cln-109-20191104210055.tar.gpg
+ # IPFS: https://bitclouds.link/ipfs/QmUkpdP5RAHa2LMEBp3FSSH7BbhnbrkjpVXjwPBh6MaYwy
+ # Onion: http://http://carnikavazp6djqx.onion/cln-109-20191104210055.tar.gpg
+ ######     END OF LINKS    ######
+
+clean up locally, on node & ipfs
+should I remove local unencrypted copy of backup? (y/n)n
+moved to /tmp/cln-backup-191104-21:03:14.tar
+
+seems like we finished! press any key...
+```
+
+### Workdir
+
+GPG encryption keys and SSH access keys are stored on your local pc where you execute Watchtower
+
+```bash
+[user@localhost ~]$ ls ~/.bitclouds/keys/gpg/
+openpgp-revocs.d  private-keys-v1.d  pubring.kbx  pubring.kbx~  random_seed  trustdb.gpg
+[user@localhost ~]$ ls ~/.bitclouds/keys/ssh/
+ssh.key  ssh.key.pub
+
+```
 
