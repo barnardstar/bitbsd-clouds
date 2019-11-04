@@ -4,6 +4,19 @@ Watchtower is CLI Bitcoin wallet with LN support
 
 ![wallet](https://i.imgur.com/2b33Tsg.png "Watchtower")
 
+### Download ###
+
+`$ cd ~`
+
+`$ wget https://raw.githubusercontent.com/bitcoin-software/bitbsd-clouds/master/client-util/watchtower.py`
+
+`$ chmod +x watchtower.py`
+
+_optionally make global_
+
+`$ ln -s watchtower.py /usr/local/bin/watchtower`
+
+`$ watchtower`
 
 ### How to install ###
 
