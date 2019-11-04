@@ -240,7 +240,7 @@ def bc_init():
         keys['ssh']['public'] = sshkey+'.pub'
         os.makedirs(gpgdir)
 
-        gpg = gnupg.GPG(keydir + '/gpg')
+        gpg = gnupg.GPG(gnupghome=keydir + '/gpg')
         input_data = gpg.gen_key_input(
             name_email='lnuser@bitclouds.sh',
             passphrase='bitclouds'
@@ -250,7 +250,7 @@ def bc_init():
         keys['gpg'] = gpgkey
     else:
         #print('importing gpg keys')
-        gpg = gnupg.GPG(keydir + '/gpg')
+        gpg = gnupg.GPG(gnupghome=keydir + '/gpg')
         gpgkey = gpg.list_keys()[0]
         keys['gpg'] = gpgkey
         #print('importing ssh keys')
@@ -428,7 +428,7 @@ def dobackup():
     global default_vps
     sure = input('Are you sure want perform backup? This action will turn off your LN node for a while! Proceed? (y/n)')
     print('loading encryption keys')
-    gpg = gnupg.GPG(keydir + '/gpg')
+    gpg = gnupg.GPG(gnupghome=keydir + '/gpg')
     if sure == 'y':
         print('test connection')
         print(sshcmd('', default_vps['ssh_port'], 'uptime'))
@@ -525,7 +525,7 @@ def doimport():
 
 
 def debackup():
-    gpg = gnupg.GPG(gpgdir)
+    gpg = gnupg.GPG(gnupghome=gpgdir)
     path = input('enter filename path: ')
     with open(path, 'rb') as f:
         dtime = datetime.datetime.strftime(datetime.datetime.now(), '%y%m%d-%H:%M:%S')
