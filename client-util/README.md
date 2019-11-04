@@ -131,7 +131,7 @@ uploading archive to node
 clightning.tar.gpg progress: 0%   
 clightning.tar.gpg progress: 56%   
 clightning.tar.gpg progress: 89%   
-clightning.tar.gpg' progress: 100%   
+clightning.tar.gpg progress: 100%   
 
 uploading to ipfs server
 uploading to web servers
