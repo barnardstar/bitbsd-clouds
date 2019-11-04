@@ -122,9 +122,9 @@ making archive
 starting cln
 started.. node was offline for 5 seconds
 downloading backup archive to local storage
-/tmp/bck.tar's progress: 0%   
-/tmp/bck.tar's progress: 43%   
-/tmp/bck.tar's progress: 100%   
+/tmp/bck.tar progress: 0%   
+/tmp/bck.tar progress: 43%   
+/tmp/bck.tar progress: 100%   
 encrypting archive locally with GPG
 upload encrypted archive to server
 uploading archive to node
