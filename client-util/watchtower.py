@@ -449,8 +449,7 @@ def dobackup():
             status = gpg.encrypt_file(
                 f, recipients=['lnuser@bitclouds.sh'],
                 output='/tmp/clightning.tar.gpg')
-        print('clean & upload encrypted archive to server')
-        os.remove('/tmp/bck.tar')
+        print('upload encrypted archive to server')
         print('uploading archive to node')
         sshupload('/tmp/clightning.tar.gpg', '/tmp/clightning.tar.gpg')
         randnum = random.randrange(100,999)
@@ -471,6 +470,13 @@ def dobackup():
         print('\n ######     END OF LINKS    ######')
         print('clean up locally, on node & ipfs')
         os.remove('/tmp/clightning.tar.gpg')
+        rem = input('should I remove local unencrypted copy of backup? (y/n)')
+        if rem == 'y':
+            os.remove('/tmp/bck.tar')
+        else:
+            dtime = datetime.datetime.strftime(datetime.datetime.now(), '%y%m%d-%H:%M:%S')
+            os.system('mv /tmp/bck.tar /tmp/cln-backup-' + dtime + '.tar')
+            print('moved to ' + '/tmp/cln-backup-' + dtime + '.tar')
         print(sshcmd('', default_vps['ssh_port'], 'rm -f /tmp/clightning.tar.gpg'))
         print(sshcmd('', default_vps['ssh_port'], 'ssh ipfs "rm -f /tmp/' + fname + '"'))
         input('seems like we finished! press any key...')
