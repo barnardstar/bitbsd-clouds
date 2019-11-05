@@ -136,4 +136,3 @@ Or you can also simply execute any command with torsocks prefix
 
 However, some programs will work as usual, because proxy enviroment variable is set in ~/.cshrc to use HTTP TORed proxy
 This means that your bot is completely anonymous and communicates over TOR with Telegram servers ;)
-
