@@ -15,7 +15,7 @@ Easiest would be to use OPNSense pre-installed image
 {
   "hours_left": 4, 
   "ip": "78.47.138.66", 
-  "pwd": "v3aHdPvex9Juq9HcMtid", 
+  "pwd": "v3aHdPvex9Juq9HcMtid", #ignore this password
   "status": "subscribed"
 }
 ```
@@ -23,9 +23,11 @@ Next, login into web-interface https://78.47.138.66 with login `admin` and passw
 
 The OpenVPN Client Export add-on package, located at VPN > OpenVPN on the Client Export tab will let you download VPN client for your platform.
 
-**Default sername:** vpn
+**Default sername:** vpn1
 
-**Default password:** remote
+**Default password:** remote1
+
+There's also 2 more users vpn2 and vpn3
 
 That's all! _Don't forget to change default passwords!_
 
