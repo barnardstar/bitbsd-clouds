@@ -19,7 +19,7 @@ Easiest would be to use OPNSense pre-installed image
   "status": "subscribed"
 }
 ```
-Next, login into web-interface https://78.47.138.66:777 with login `admin` and password `pfsense`
+Next, login into web-interface https://78.47.138.66:777 with login `admin` and password `BitClouds`
 
 The OpenVPN Client Export add-on package, located at VPN > OpenVPN on the Client Export tab will let you download VPN client for your platform.
 
