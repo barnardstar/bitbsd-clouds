@@ -19,7 +19,7 @@ Easiest would be to use OPNSense pre-installed image
   "status": "subscribed"
 }
 ```
-Next, login into web-interface https://78.47.138.66 with login `admin` and password `pfsense`
+Next, login into web-interface https://78.47.138.66:777 with login `admin` and password `pfsense`
 
 The OpenVPN Client Export add-on package, located at VPN > OpenVPN on the Client Export tab will let you download VPN client for your platform.
 
@@ -29,7 +29,7 @@ The OpenVPN Client Export add-on package, located at VPN > OpenVPN on the Client
 
 There's also 2 more users vpn2 and vpn3
 
-That's all! _Don't forget to change default passwords!_
+That's all! _Don't forget to change default passwords!_WEB-UI: https://HOST_IP:777
 
 **Tip!** You can use [@lntxbot] to create and manage (type `'/bitclouds help'` to bot) your VPS right from Telegram
 
