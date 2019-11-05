@@ -25,7 +25,7 @@ On BitClouds.sh you can spin up [rootshell], [bitcoind], [lightningd], [VPN], [T
 [lightningd]: https://bitcoin-software.github.io/bitbsd-clouds/lightningd/
 [bitcoind]: https://bitcoin-software.github.io/bitbsd-clouds/bitcoind/
 [rootshell]: https://bitcoin-software.github.io/bitbsd-clouds/rootshell/
-[TOR hidden service]: https://bitcoin-software.github.io/bitbsd-clouds/tor-hidden-service/
+[TOR hidden service]: https://github.com/bitcoin-software/bitbsd-clouds/tree/master/tor-hidden-service
 
 **Some hints**
 
