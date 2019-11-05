@@ -87,3 +87,4 @@ That's all! Try it to access via your TOR browser!
 
 `index.html` file is located in `/usr/local/www/nginx/` directory and the nginx config in `/usr/local/etc/nginx/` as `nginx.conf`
 
+
