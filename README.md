@@ -18,7 +18,7 @@ Highly restricted application user permissions
 
 With jails, you can efficiently and securely run many bitcoin apps without headache
 
-On BitClouds.sh you can spin up [rootshell], [bitcoind], [lightningd], [VPN] or [telegram-bot] just for 66 sats/hor
+On BitClouds.sh you can spin up [rootshell], [bitcoind], [lightningd], [VPN] or [telegram-bot] just for 66 sats per hour
 
 [telegram-bot]: https://bitcoin-software.github.io/bitbsd-clouds/telegram-bot/
 [VPN]: https://bitcoin-software.github.io/bitbsd-clouds/vpn/
