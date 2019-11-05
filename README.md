@@ -1,5 +1,33 @@
 ### BitBSD jail repo ###
 
+**Jail features**
+
+Built-in TOR - there is no other way to access internet
+
+Transparent full data encryption
+
+Redundand storage array with data integrity checks
+
+Security-hardened enviroment
+
+OS level process isolation
+
+Highly restricted application user permissions
+
+**What I can do?**
+
+With jails, you can efficiently and securely run many bitcoin apps without headache
+
+On BitClouds.sh you can spin up [#rootshell], [bitcoind], [lightningd], [VPN] or [telegram-bot] just for 66 sats/hor
+
+[telegram-bot]:https://bitcoin-software.github.io/bitbsd-clouds/telegram-bot/
+[VPN]:https://bitcoin-software.github.io/bitbsd-clouds/vpn/
+[lightningd]:https://bitcoin-software.github.io/bitbsd-clouds/lightningd/
+[bitcoind]:https://bitcoin-software.github.io/bitbsd-clouds/bitcoind/
+[#rootshell]:[lightningd]:https://bitcoin-software.github.io/bitbsd-clouds/rootshell/
+
+**Some hints**
+
 `$ curl https://bitclouds.sh/images`
 
 ````
@@ -57,17 +85,3 @@
   "invoice": "lnbc1500n1pwm6j23pp5yfjxkup92ru8xgnany9g0tlmc39a27354vpcd4lcghlzns20yczqdqj23skj7tpdenhx6r0w5xqzjccqp2rzjqfxj8p6qjf5l8du7yuytkwdcjhylfd4gxgs48t65awjg04ye80mq7zx8dgqqy9gqqyqqqqqqqqqqvsqqrctl0e2gdcjnz5lv52v9gss7aww5wrle9c78qnwtvy4nywp30kydlreaywwjxawr8vnluak836wnlvvc3j0xvpvglqg2xrsx2y3ep3m8qp35p59r"
 }
 ````
-
-**Jail features**
-
-Built-in TOR - there is no other way to access internet
-
-Transparent full data encryption
-
-Redundand storage array with data integrity checks
-
-Security-hardened enviroment
-
-OS level process isolation
-
-Highly restricted application user permissions
