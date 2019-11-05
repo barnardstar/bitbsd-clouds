@@ -6,8 +6,8 @@ You can control Telegram in two ways:
 
 [Using API] and controlling whole account (control contacts, numbers and do everything you can do on your mobile app)
 
-[Using bots]:https://github.com/bitcoin-software/Telethon
-[Using API]:https://github.com/bitcoin-software/python-telegram-bot
+[Using API]:https://github.com/bitcoin-software/Telethon
+[Using bots]:https://github.com/bitcoin-software/python-telegram-bot
 
 
 ![bf](https://i.imgur.com/3OYZZGN.png "@BotFather")
