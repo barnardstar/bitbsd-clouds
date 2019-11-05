@@ -29,7 +29,7 @@ The OpenVPN Client Export add-on package, located at VPN > OpenVPN on the Client
 
 There's also 2 more users vpn2 and vpn3
 
-That's all! _Don't forget to change default passwords!_WEB-UI: https://HOST_IP:777
+That's all! _Don't forget to change default passwords!_ WEB-UI: https://HOST_IP:777
 
 **Tip!** You can use [@lntxbot] to create and manage (type `'/bitclouds help'` to bot) your VPS right from Telegram
 
