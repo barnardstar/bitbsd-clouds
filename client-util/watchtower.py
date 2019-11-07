@@ -112,11 +112,11 @@ def sshcmd(pwd, port, cmd, textin=''):
     #keyfile = StringIO(s)
     #pkey = paramiko.RSAKey.from_private_key(keyfile)
     try:
-        ssh.connect('bitbsd.org', username='lightning', port=int(port), key_filename=sshkey, look_for_keys=False)
+        ssh.connect('bitclouds.link', username='lightning', port=int(port), key_filename=sshkey, look_for_keys=False)
     except Exception as e:
         #print('!!!!!!!!!!!!!!!' + sshkey)
         #print(e)
-        ssh.connect('bitbsd.org', username='lightning', port=int(port), password=str(pwd))
+        ssh.connect('bitclouds.link', username='lightning', port=int(port), password=str(pwd))
     #chan = ssh.get_transport().open_session()
 
     stdin, stdout, stderr = ssh.exec_command(cmd)
@@ -144,7 +144,7 @@ def sshupload(file, remote_directory):
     #s = f.read()
     #keyfile = StringIO(s)
     #pkey = paramiko.RSAKey.from_private_key(keyfile)
-    ssh.connect('bitbsd.org', username='lightning', port=default_vps['ssh_port'], key_filename=sshkey, look_for_keys=False)
+    ssh.connect('bitclouds.link', username='lightning', port=default_vps['ssh_port'], key_filename=sshkey, look_for_keys=False)
 
     scp = SCPClient(ssh.get_transport(), progress=progress)
     try:
@@ -168,7 +168,7 @@ def sshdownload(remote_path, local_path):
     #s = f.read()
     #keyfile = StringIO(s)
     #pkey = paramiko.RSAKey.from_private_key(keyfile)
-    ssh.connect('bitbsd.org', username='lightning', port=default_vps['ssh_port'], key_filename=sshkey, look_for_keys=False)
+    ssh.connect('bitclouds.link', username='lightning', port=default_vps['ssh_port'], key_filename=sshkey, look_for_keys=False)
     scp = SCPClient(ssh.get_transport(), progress=progress)
     try:
         scp.get(remote_path,local_path)
@@ -318,7 +318,7 @@ def newnode():
             print('Copy ssh keys...')
             with open(workdir+"/pwd.tmp", "w") as text_file:
                 text_file.write(vps['ssh_pwd'])
-            os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' +sshkey+ ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p'+str(vps['ssh_port']))
+            os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' +sshkey+ ' -o "StrictHostKeyChecking=no" lightning@bitclouds.link -p'+str(vps['ssh_port']))
             os.remove(workdir+"/pwd.tmp")
             pwd = '1'
             pwd2 = '2'
@@ -329,7 +329,7 @@ def newnode():
                     print('Password mismatch or too short! re-try again...')
             if pwd == pwd2:
                 vps['ssh_pass'] = pwd
-                os.system('ssh -i' +sshkey+ ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p'+str(vps['ssh_port']) + ' "cps "+' + pwd)
+                os.system('ssh -i' +sshkey+ ' -o "StrictHostKeyChecking=no" lightning@bitclouds.link -p'+str(vps['ssh_port']) + ' "cps "+' + pwd)
             # echo \"{{ pwd }}\" | pw usermod lightning -h0
             print('Saving host...')
             vpslist.append(vps)
@@ -471,7 +471,7 @@ def dobackup():
         m = re.search('added ([a-zA-Z0-9]+) cln', ipfs_out)
         ipfs_hash = m.group(1)
         print(' ###### HERE IS YOUR BACKUP ######\n\n')
-        print(' # Clearnet URL: https://bitbsd.org/backups/' + fname)
+        print(' # Clearnet URL: https://bitclouds.link/backups/' + fname)
         print(' # IPFS: https://bitclouds.link/ipfs/' + ipfs_hash)
         print(' # Onion: http://carnikavazp6djqx.onion/' + fname)
 
@@ -516,7 +516,7 @@ def doimport():
     print('Copy ssh keys...')
     with open(workdir + "/pwd.tmp", "w") as text_file:
         text_file.write(vps['ssh_pwd'])
-    os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' + sshkey + ' -o "StrictHostKeyChecking=no" lightning@bitbsd.org -p' + str(vps['ssh_port']))
+    os.system('sshpass -f ' + workdir + '/pwd.tmp ssh-copy-id -i' + sshkey + ' -o "StrictHostKeyChecking=no" lightning@bitclouds.link -p' + str(vps['ssh_port']))
     os.remove(workdir + "/pwd.tmp")
 
     pwd = '1'
@@ -558,10 +558,10 @@ def devinfo():
     global default_vps
     menu = MultiSelectMenu("curl -X POST "+default_vps['sparko'] + " \ ",
                            " -d '{\"method\": \"getinfo\"}' -H 'X-Access: grabyourkeyinside'",
-                           epilogue_text=('ssh lightning@bitbsd.org -p '+ str(default_vps['ssh_port']) + ' -i ' + sshkey),
+                           epilogue_text=('ssh lightning@bitclouds.link -p '+ str(default_vps['ssh_port']) + ' -i ' + sshkey),
                            exit_option_text='Go back')  # Customize the exit text
 
-    command_item = CommandItem("Connect via SSH", 'ssh lightning@bitbsd.org -p ' + str(default_vps['ssh_port']) + ' -i ' + sshkey)
+    command_item = CommandItem("Connect via SSH", 'ssh lightning@bitclouds.link -p ' + str(default_vps['ssh_port']) + ' -i ' + sshkey)
     menu.append_item(command_item)
     menu.start()
     menu.join()
