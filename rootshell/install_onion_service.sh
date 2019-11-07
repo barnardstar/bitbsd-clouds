@@ -14,9 +14,12 @@ print("done! now enabling TOR service")
 #with fileinput.FileInput("/usr/local/etc/tor/torrc", inplace=True, backup='.bak') as file:
 #    for line in file:
 #        print(line.replace("#HiddenServiceDir /var/db/tor/other_hidden_service", "HiddenServiceDir /var/db/tor/other_hidden_service"), end='')
+#enable webservice
 os.system('echo "HiddenServiceDir /var/db/tor/onionweb" >> /usr/local/etc/tor/torrc')
 os.system('echo "HiddenServicePort 80 localhost:80" >> /usr/local/etc/tor/torrc')
-
+#enable ssh
+sshport = str(s.popen('sockstat -l4 | grep sshd | egrep -o ":6[0-9]+ " | egrep -o "[0-9]+"').read()).rstrip()
+os.system('echo "HiddenServicePort 22 localhost:' + sshport + ' >> /usr/local/etc/tor/torrc')
 os.system("mkdir /var/db/tor/onionweb")
 os.system("chown -R _tor:_tor /var/db/tor/onionweb")
 os.system("chmod -R 700 /var/db/tor/onionweb")
