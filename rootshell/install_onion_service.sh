@@ -3,7 +3,7 @@ import os
 import fileinput
 
 print("installing TOR..")
-os.system("pkg install -y tor rsync nginx")
+os.system("pkg install -y tor nginx")
 print("enabling TOR")
 os.system("sysrc tor_enable=YES")
 os.system("sysrc enable_enable=YES")
