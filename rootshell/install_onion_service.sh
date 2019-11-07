@@ -18,7 +18,6 @@ os.system("clear")
 #enable webservice
 os.system('echo "HiddenServiceDir /var/db/tor/onionweb" >> /usr/local/etc/tor/torrc')
 os.system('echo "HiddenServicePort 80 localhost:80" >> /usr/local/etc/tor/torrc')
-
 print('editing TOR config...')
 sshport = str(os.popen('sockstat -l4 | grep sshd | egrep -o ":6[0-9]+ " | egrep -o "[0-9]+"').read()).rstrip()
 print('enable ssh access')
