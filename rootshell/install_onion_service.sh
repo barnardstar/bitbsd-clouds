@@ -11,10 +11,12 @@ os.system('echo "Socks5Proxy 192.168.0.199:9050" >> /usr/local/etc/tor/torrc')
 print("starting TOR")
 os.system("service tor start")
 print("done! now enabling TOR service")
-with fileinput.FileInput("/usr/local/etc/tor/torrc", inplace=True, backup='.bak') as file:
-    for line in file:
-        print(line.replace("#HiddenServiceDir /var/db/tor/other_hidden_service", "HiddenServiceDir /var/db/tor/other_hidden_service"), end='')
-        print(line.replace("#HiddenServicePort 80 127.0.0.1:80", "HiddenServicePort 80 localhost:80"), end='')
+#with fileinput.FileInput("/usr/local/etc/tor/torrc", inplace=True, backup='.bak') as file:
+#    for line in file:
+#        print(line.replace("#HiddenServiceDir /var/db/tor/other_hidden_service", "HiddenServiceDir /var/db/tor/other_hidden_service"), end='')
+os.system('echo "HiddenServiceDir /var/db/tor/onionweb" >> /usr/local/etc/tor/torrc')
+os.system('echo "HiddenServicePort 80 localhost:80" >> /usr/local/etc/tor/torrc')
+
 os.system("mkdir /var/db/tor/other_hidden_service")
 os.system("chown -R _tor:_tor /var/db/tor/other_hidden_service")
 os.system("chmod -R 600 /var/db/tor/other_hidden_service")
