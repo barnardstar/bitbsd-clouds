@@ -27,6 +27,9 @@
 }
 ````
 
+Connect to server
+
+`ssh lightning@bitbsd.org -p61732`
 
 Here you go with some basic stuff
 
