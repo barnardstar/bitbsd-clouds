@@ -20,7 +20,7 @@ os.system('echo "HiddenServiceDir /var/db/tor/onionweb" >> /usr/local/etc/tor/to
 os.system('echo "HiddenServicePort 80 localhost:80" >> /usr/local/etc/tor/torrc')
 
 print('editing TOR config...')
-sshport = str(sys.popen('sockstat -l4 | grep sshd | egrep -o ":6[0-9]+ " | egrep -o "[0-9]+"').read()).rstrip()
+sshport = str(os.popen('sockstat -l4 | grep sshd | egrep -o ":6[0-9]+ " | egrep -o "[0-9]+"').read()).rstrip()
 print('enable ssh access')
 os.system('echo "HiddenServicePort 22 localhost:' + sshport + '" >> /usr/local/etc/tor/torrc')
 os.system("mkdir /var/db/tor/onionweb")
