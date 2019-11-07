@@ -28,7 +28,7 @@ Enter `{$SSH_PWD}` and then
 
 `satoshi@rootshell ~# sudo su`  
 
-Install TOR
+Install TOR and do all configuration by single command
 
 `hadar:/root@[16:11] # install_onion_service.sh`
 
