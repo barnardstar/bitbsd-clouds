@@ -47,9 +47,9 @@ right from your app using [sparko]
  
  _Note! `https://bitbsd.org:59330/rpc` is "sparko" key in status response and `masterkeythatcandoeverything` can be found inside your jail ~/.lightning/config as "sparko-keys" parameter!_
 
-or from your pc using [client-util]
+or from your pc using [CLI tool]
 
-[client-util]: https://github.com/bitcoin-software/bitbsd-clouds/tree/master/client-util
+[CLI tool]: https://github.com/bitcoin-software/bitbsd-clouds/tree/master/client-util
 
 `you@home ~$ python3.7 cln-cli.py getinfo` 
 
