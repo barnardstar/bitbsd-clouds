@@ -2,7 +2,7 @@
 import os
 import fileinput
 
-print("installing TOR..")
+print("installing TOR.. this will take some while, be patient!")
 os.system("pkg install -y tor nginx")
 print("enabling TOR")
 os.system("sysrc tor_enable=YES")
