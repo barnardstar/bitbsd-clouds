@@ -19,7 +19,7 @@ os.system('echo "HiddenServicePort 80 localhost:80" >> /usr/local/etc/tor/torrc'
 
 os.system("mkdir /var/db/tor/onionweb")
 os.system("chown -R _tor:_tor /var/db/tor/onionweb")
-os.system("chmod -R 600 /var/db/tor/onionweb")
+os.system("chmod -R 700 /var/db/tor/onionweb")
 os.system("service tor restart")
 os.system("cd /usr/local/www/nginx && ls -la")
 print('Edit content by runnng "nano index.html"')
