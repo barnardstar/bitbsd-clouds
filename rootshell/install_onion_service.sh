@@ -25,7 +25,7 @@ os.system('echo "HiddenServicePort 22 localhost:' + sshport + '" >> /usr/local/e
 os.system("mkdir /var/db/tor/onionweb")
 os.system("chown -R _tor:_tor /var/db/tor/onionweb")
 print('grant satoshi (wheel) access to web dir...')
-os.system("chown -R satoshi:wheel /usr/local/www/nginx")
+os.system("chown -R satoshi:wheel /usr/local/www/nginx-dist")
 os.system("chmod -R 700 /var/db/tor/onionweb")
 os.system("service tor restart")
 os.system("cd /usr/local/www/nginx && ls -la")
