@@ -676,5 +676,6 @@ def main():
     except Exception:
         genmenu()
 
+
 if __name__ == "__main__":
     main()
