@@ -51,7 +51,7 @@ or from your pc using [CLI tool]
 
 [CLI tool]: https://github.com/bitcoin-software/bitbsd-clouds/tree/master/client-util
 
-`you@home ~$ python3.7 cln-cli.py getinfo` 
+`you@home ~$ python3.7 watchtower.py getinfo` 
 
 with ready scripts:
 
