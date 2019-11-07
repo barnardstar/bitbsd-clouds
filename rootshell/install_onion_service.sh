@@ -11,8 +11,14 @@ print("starting TOR")
 os.system("service tor start")
 print("done! now enabling TOR service")
 for line in fileinput.input("/usr/local/etc/tor/torrc", inplace = 1):
-    print line.replace("#HiddenServiceDir /var/db/tor/other_hidden_service", "HiddenServiceDir /var/db/tor/other_hidden_service"),
-    print line.replace("#HiddenServicePort 80 127.0.0.1:80", "HiddenServicePort 80 localhost:80"),
+    print(line.replace("#HiddenServiceDir /var/db/tor/other_hidden_service", "HiddenServiceDir /var/db/tor/other_hidden_service"))
+    print(line.replace("#HiddenServicePort 80 127.0.0.1:80", "HiddenServicePort 80 localhost:80"))
+
+with fileinput.FileInput("/usr/local/etc/tor/torrc", inplace=True, backup='.bak') as file:
+    for line in file:
+        print(line.replace("#HiddenServiceDir /var/db/tor/other_hidden_service", "HiddenServiceDir /var/db/tor/other_hidden_service"), end='')
+        print(line.replace("#HiddenServicePort 80 127.0.0.1:80", "HiddenServicePort 80 localhost:80"), end='')
+
 print("config file: /usr/local/etc/tor/torrc")
 print("to enable .onion service edit 'HiddenService' part in /usr/local/etc/tor/torrc")
 print("use 'service tor restart' to restart daemon after config changed!")
