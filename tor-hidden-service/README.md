@@ -33,6 +33,17 @@ Install TOR
 `hadar:/root@[16:11] # install_onion_service.sh`
 
 ```
+Edit content by runnng "nano /usr/local/www/index.html"
+your .onion address:
+jjicf4zjnyjjmyupti4ab5b5krwdjxzccgqgxkfe4io3eju4c42sfiqd.onion
+You can put any file in "/usr/local/www/" and then download it http://
+jjicf4zjnyjjmyupti4ab5b5krwdjxzccgqgxkfe4io3eju4c42sfiqd.onion/anyfile.zip
+config file: /usr/local/etc/tor/torrc
+to manage .onion service configuration edit 'HiddenService' part in end of file /usr/local/etc/tor/torrc
+use 'service tor restart' to restart daemon after config changed!
 
+remember to do
+
+$sudo su
 
 ```
