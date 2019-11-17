@@ -473,7 +473,7 @@ def dobackup():
         print(' ###### HERE IS YOUR BACKUP ######\n\n')
         print(' # Clearnet URL: https://bitclouds.link/backups/' + fname)
         print(' # IPFS: https://bitclouds.link/ipfs/' + ipfs_hash)
-        print(' # Onion: http://carnikavazp6djqx.onion/' + fname)
+        print(' # Onion: http://carnikavazp6djqx.onion/backups/' + fname)
 
         print('\n ######     END OF LINKS    ######')
         dtime = datetime.datetime.strftime(datetime.datetime.now(), '%H:%M:%S')
