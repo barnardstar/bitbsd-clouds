@@ -622,7 +622,7 @@ def genmenu():
     do_backup = FunctionItem("Perform cold backup", dobackup)
     dev_info = FunctionItem("RPC / SSH access", devinfo)
     decrypt_backup = FunctionItem("Decrypt backup", debackup)
-    do_import = FunctionItem("Import BitBSD c-lightning jail", doimport)
+    do_import = FunctionItem("Import Bitclouds.sh c-lightning jail", doimport)
     refill_node = FunctionItem("Refill node", refill)
     create_item = FunctionItem("Create new node", newnode)
 
