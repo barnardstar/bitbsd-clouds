@@ -2,4 +2,5 @@
 echo "stopping bitcoin"
 killall bitcoind
 echo "starting bitcoin"
-bitcoind -datadir=/var/db/bitcoin/ > /dev/null &
+sleep 7
+bitcoind -conf=/usr/local/etc/bitcoin.conf -datadir=/var/db/bitcoin/ > /dev/null &
