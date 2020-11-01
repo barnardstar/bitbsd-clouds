@@ -8,7 +8,7 @@ Built-in TOR - there is no other way to access internet
 
 Transparent full data encryption
 
-Redundand storage array with data integrity checks
+Redundant storage array with data integrity checks
 
 Security-hardened enviroment
 
